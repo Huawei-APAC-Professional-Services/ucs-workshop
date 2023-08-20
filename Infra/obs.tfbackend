@@ -1,0 +1,7 @@
+bucket   = "hfa-terraform-state"
+key      = "ucs-workshop/terraform.tfstate"
+region   = "ap-southeast-3"
+endpoint = "https://obs.ap-southeast-3.myhuaweicloud.com"
+skip_region_validation      = true
+skip_credentials_validation = true
+skip_metadata_api_check     = true

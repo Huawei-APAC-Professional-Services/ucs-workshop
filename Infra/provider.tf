@@ -11,7 +11,7 @@ terraform {
 
   # All the backend configuration will be saved in a separated file named obs.tfbackend
   # Change the bucket name and key according to customer environment
-  backend "s3" {}
+  #  backend "s3" {}
 }
 
 provider "huaweicloud" {
@@ -19,6 +19,6 @@ provider "huaweicloud" {
 }
 
 provider "huaweicloud" {
-  alias = "hk"
+  alias  = "hk"
   region = "ap-southeast-1"
 }

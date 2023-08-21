@@ -20,10 +20,11 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: app
-  apiGroup: rbac.authorization.k8s.io
+  namespace: default
+  apiGroup: ""
 roleRef:
   kind: ClusterRole
-  name: secret-reader
+  name: nodes-reader
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
@@ -40,9 +41,9 @@ spec:
       labels:
         app: app
     spec:
+      serviceAccountName: app
       containers:
       - name: app
-        image: nginx:1.14.2
-        serviceAccountName: app
+        image: swr.ap-southeast-3.myhuaweicloud.com/core/app:v1
         ports:
         - containerPort: 80

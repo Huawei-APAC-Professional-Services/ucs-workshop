@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"embed"
+	"html/template"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +21,9 @@ import (
 )
 
 var region string
+
+//go:embed templates/*
+var templates embed.FS
 
 func init() {
 	config, err := rest.InClusterConfig()
@@ -41,8 +46,10 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	templ := template.Must(template.New("").ParseFS(templates, "templates/*.tmpl"))
+	r.SetHTMLTemplate(templ)
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"Region": region})
+		ctx.HTML(http.StatusOK, "index.tmpl", gin.H{"Region": region})
 	})
 	r.Run("0.0.0.0:80")
 }

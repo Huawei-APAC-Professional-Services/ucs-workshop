@@ -123,3 +123,31 @@ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 apt-get update
 apt-get install -y kubectl
 ```
+5. Execute the following command to check if `kubectl` has been properly installed
+```
+kubectl version --client
+```
+6. Log in to Huawei Cloud console and choose `UCS` service
+7. On the `Ubiquitous Cloud Native Service` page, Choose the fleet you created in [Create UCS fleet](#create-ucs-fleet) task.
+![SelectFleet](./images/004_GetKubeConfig_001.png)
+8. On the `Feet Info` part of the page, Click `kubectl` to download kubeconfig file
+![ClickKubectl](./images/004_GetKubeConfig_002.png)
+9. On the pop-up page, provide the following parameters:
+* `project name`: `ap-southeast-3`
+* `VPC`: `ucs_singapore`
+* `Master Node Subnet`: `ucs_singapore_cce_master`
+* `Validity Period`: any value will do
+
+Click `Download` to save `kubeconfig.json` on your laptop
+
+![kubeconfig-input](./images/004_GetKubeConfig_003.png)
+
+10. Copy the content of the downloaded kubeconfig to `.kube/config` file in the ECS
+
+11. Execute the following command to check if the kubeconfig is valid
+```
+kubectl get clusters
+```
+You will get the similar outputs like the following picture depicts
+![Getclusters](./images/004_GetKubeConfig_005.png)
+

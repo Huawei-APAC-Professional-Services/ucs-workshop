@@ -151,3 +151,24 @@ kubectl get clusters
 You will get the similar outputs like the following picture depicts
 ![Getclusters](./images/004_GetKubeConfig_005.png)
 
+## Application Deployment
+1. Change directory to `ucs-workshop/app` and open `app.yaml` file with a text editor on your laptop
+2. Move to line `72` and change the value of `kubernetes.io/elb.subnet-id` field to `singapore_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
+![changesubid](./images/005_appdeployment_001.png)
+3. Copy `app.yaml` file into ECS
+4. Execute the following command to deploy application to UCS
+```
+kubectl apply -f app.yaml
+```
+5. Change directory to `ucs-workshop` and open `propagation_policy.yaml` file with a text editor on your laptop
+6. Move to line `81` and change the value of `kubernetes.io/elb.subnet-id` field to `hk_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
+9. Copy `propagation_policy.yaml` file into ECS
+10. Execute the following command to deploy application into two different clusters
+```
+kubectl apply -f propagation_policy.yaml
+```
+11. Execute the following command to check if the deployment is successful
+![Deployment](./images/005_appdeployment_002.png)
+
+## Traffic Management
+

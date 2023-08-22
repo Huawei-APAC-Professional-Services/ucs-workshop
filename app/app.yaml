@@ -44,7 +44,7 @@ spec:
       serviceAccountName: app
       containers:
       - name: app
-        image: swr.ap-southeast-3.myhuaweicloud.com/core/app:v2
+        image: swr.ap-southeast-3.myhuaweicloud.com/core/app:v3
         ports:
         - containerPort: 80
 ---

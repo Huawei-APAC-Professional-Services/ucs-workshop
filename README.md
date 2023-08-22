@@ -47,7 +47,8 @@ git clone https://github.com/Huawei-APAC-Professional-Services/ucs-workshop.git
 ```
 
 2. Change directory to `ucs-workshop/Infra`
-3. Apply Terraform Configuration
+3. Apply Terraform Configuration  
+
 :bulb: Local state file is used for this Terraform configuration, but you can change it to remote state as well.
 ```
 Terraform apply

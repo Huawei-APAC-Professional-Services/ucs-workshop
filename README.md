@@ -96,7 +96,7 @@ After the terraform applying, there is a `ecs.pem` file inside the `infra` direc
 12. Check UCS fleets status until the federation is enabled
 ![EnabledFederation2](./images/002_CreateFleet_013.png)
 
-## Install kubectl in ECS
+## Configure kubectl in ECS
 1. Change directory to `ucs-workshop/infra`
 2. If you don't have any ssh terminal installed on your laptop, you can use OpenSSH for Windows to log in to ECS, but first you may need to change the key permission when you are going to use OpenSSH for Windows, you can choose one of the two methods to change the key permission depends on which windows terminal you are using.
 
@@ -133,10 +133,10 @@ kubectl version --client
 8. On the `Feet Info` part of the page, Click `kubectl` to download kubeconfig file
 ![ClickKubectl](./images/004_GetKubeConfig_002.png)
 9. On the pop-up page, provide the following parameters:
-* `project name`: `ap-southeast-3`
-* `VPC`: `ucs_singapore`
-* `Master Node Subnet`: `ucs_singapore_cce_master`
-* `Validity Period`: any value will do
+* project name: `ap-southeast-3`
+* VPC: `ucs_singapore`
+* Master Node Subnet: `ucs_singapore_cce_master`
+* Validity Period: any value will do
 
 Click `Download` to save `kubeconfig.json` on your laptop
 

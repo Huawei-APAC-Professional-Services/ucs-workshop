@@ -64,6 +64,8 @@ When the terraform applying completes, you will get the following three outputs,
 
 ![Saveoutput](./images/003_ApplyTerraform_001.png)
 
+After the terraform applying, there is a `ecs.pem` file inside the `infra` directory, it will be used to login to ECS.
+
 ## Create UCS fleet
 1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential
 2. On the upper left corner of the console, Choose `Service List` and search `ucs`
@@ -91,4 +93,24 @@ When the terraform applying completes, you will get the following three outputs,
 ![EnableFederation1](./images/002_CreateFleet_011.png)
 11. It will take some time to enable the federation
 ![EnabledFederation2](./images/002_CreateFleet_012.png)
-12. 
+12. Check UCS fleets status until the federation is enabled
+![EnabledFederation2](./images/002_CreateFleet_013.png)
+
+## Install kubectl in ECS
+1. Change directory to `ucs-workshop/infra`
+2. If you don't have any ssh terminal installed on your laptop, you can use OpenSSH for Windows to log in to ECS, but first you may need to change the key permission when you are going to use OpenSSH for Windows, you can choose one of the two methods to change the key permission depends on which windows terminal you are using.
+
+* Windows CMD
+```
+icacls ecs.pem /inheritance:r
+icacls ecs.pem /grant:r "%username%":"(R)"
+```
+* Windows Powershell
+```
+icacls ecs.pem /inheritance:r
+start-process "icacls.exe" -ArgumentList 'ecs.pem /grant:r "$env:USERNAME":"(R)"'
+```
+3. Log in to the ECS created in [Apply Terraform Configuration](#apply-terraform-configuration) with the following command on your terminal
+```
+ssh -i ecs.pem root@`ecs_public_ip`
+``` 

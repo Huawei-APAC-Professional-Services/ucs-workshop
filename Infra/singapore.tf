@@ -1,6 +1,7 @@
 locals {
   ucs_singapore_cce_master_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 0)
   ucs_singapore_nat_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 1)
+  ucs_singapore_elb_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 2)
   ucs_singapore_cce_pod_cidr    = cidrsubnet(var.ucs_singapore_cidr, 4, 1)
 }
 
@@ -35,6 +36,14 @@ resource "huaweicloud_vpc_subnet" "ucs_singapore_nat" {
   cidr = local.ucs_singapore_nat_cidr
 
   gateway_ip = cidrhost(local.ucs_singapore_nat_cidr, 1)
+  vpc_id     = huaweicloud_vpc.ucs_singapore.id
+}
+
+resource "huaweicloud_vpc_subnet" "ucs_singapore_elb" {
+  name = "ucs_singapore_elb"
+  cidr = local.ucs_singapore_elb_cidr
+
+  gateway_ip = cidrhost(local.ucs_singapore_elb_cidr, 1)
   vpc_id     = huaweicloud_vpc.ucs_singapore.id
 }
 

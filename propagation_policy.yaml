@@ -1,0 +1,135 @@
+apiVersion: policy.karmada.io/v1alpha1
+kind: PropagationPolicy
+metadata:
+  name: app-propagation
+spec:
+  resourceSelectors:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: app-deployment
+    - apiVersion: v1
+      kind: ServiceAccount
+      name: app
+    - apiVersion: v1
+      kind: Service
+      name: app-service
+  placement:
+    clusterAffinity:
+      clusterNames:
+        - ucs-hk
+        - ucs-singapore
+---
+apiVersion: policy.karmada.io/v1alpha1
+kind: ClusterPropagationPolicy
+metadata:
+  name: app-propagation
+spec:
+  resourceSelectors:
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      name: nodes-reader
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      name: read-nodes-global
+  placement:
+    clusterAffinity:
+      clusterNames:
+        - ucs-hk
+        - ucs-singapore
+---
+apiVersion: policy.karmada.io/v1alpha1
+kind: OverridePolicy
+metadata:
+  name: app-image
+spec:
+  resourceSelectors:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: app-deployment
+      namespace: default
+      labelSelector:
+        matchLabels:
+          app: app
+  overrideRules:
+    - targetCluster:
+        clusterNames:
+          - ucs-hk
+      overriders:
+        imageOverrider:
+          - component: Registry
+            operator: replace
+            value: swr.ap-southeast-1.myhuaweicloud.com
+---
+apiVersion: policy.karmada.io/v1alpha1
+kind: OverridePolicy
+metadata:
+  name: app-service
+spec:
+  resourceSelectors:
+    - apiVersion: v1
+      kind: Service
+      name: app-service
+      namespace: default
+  overrideRules:
+    - targetCluster:
+        clusterNames:
+          - ucs-hk
+      overriders:
+        annotationsOverrider:
+          - operator: replace
+            value:
+              kubernetes.io/elb.subnet-id: 20d6cfaa-6d64-4fb1-9360-02e982b81f77
+          - operator: replace
+            value:
+              kubernetes.io/elb.autocreate:
+                '{
+                    "type": "public",
+                    "bandwidth_name": "cce-bandwidth-app",
+                    "bandwidth_chargemode": "traffic",
+                    "bandwidth_size": 5,
+                    "bandwidth_sharetype": "PER",
+                    "eip_type": "5_bgp",
+                    "available_zone": [
+                        "ap-southeast-1a",
+                        "ap-southeast-1b"
+                    ],
+                    "l4_flavor_name": "L4_flavor.elb.s1.small"
+                }'
+
+#---
+#apiVersion: policy.karmada.io/v1alpha1
+#kind: OverridePolicy
+#metadata:
+#  name: app-ingress
+#spec:
+#  resourceSelectors:
+#    - apiVersion: networking.k8s.io/v1
+#      kind: Ingress
+#      name: app-ingress
+#      namespace: default
+#  overrideRules:
+#    - targetCluster:
+#        clusterNames:
+#          - ucs-hk
+#      overriders:
+#        annotationsOverrider:
+#          - operator: add
+#            value:
+#              kubernetes.io/elb.subnet-id: 20d6cfaa-6d64-4fb1-9360-02e982b81f77
+#          - operator: replace
+#            value:
+#              kubernetes.io/elb.autocreate:
+#                '{
+#                    "type": "public",
+#                    "bandwidth_name": "cce-bandwidth-app",
+#                    "bandwidth_chargemode": "traffic",
+#                    "bandwidth_size": 5,
+#                    "bandwidth_sharetype": "PER",
+#                    "eip_type": "5_bgp",
+#                    "available_zone": [
+#                        "ap-southeast-1a",
+#                        "ap-southeast-1b"
+#                    ],
+#                    "l7_flavor_name": "L7_flavor.elb.s1.small"
+#                }'
+

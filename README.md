@@ -81,3 +81,4 @@ Wait for the Terraform to finish, two CCE clusters will be created in Singapore 
 ![EnableFederation1](./images/002_CreateFleet_011.png)
 11. It will take some time to enable the federation
 ![EnabledFederation2](./images/002_CreateFleet_012.png)
+12. 

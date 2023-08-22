@@ -5,22 +5,16 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	//
-	// Uncomment to load all auth plugins
-	// _ "k8s.io/client-go/plugin/pkg/client/auth"
-	//
-	// Or uncomment to load specific auth plugins
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/azure"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 )
 
 var region string
+var podName string
 
 //go:embed templates/*
 var templates embed.FS
@@ -42,6 +36,7 @@ func init() {
 		panic("No Node Has been found")
 	}
 	region = nodes.Items[0].Labels["topology.kubernetes.io/region"]
+	podName = os.Getenv("HOSTNAME")
 }
 
 func main() {
@@ -49,7 +44,7 @@ func main() {
 	templ := template.Must(template.New("").ParseFS(templates, "templates/*.tmpl"))
 	r.SetHTMLTemplate(templ)
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "index.tmpl", gin.H{"Region": region})
+		ctx.HTML(http.StatusOK, "index.tmpl", gin.H{"Region": region, "Pod": podName})
 	})
 	r.Run("0.0.0.0:80")
 }

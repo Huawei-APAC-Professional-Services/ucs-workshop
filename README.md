@@ -46,7 +46,7 @@ $Env:HW_REGION_NAME="ap-southeast-3"
 git clone https://github.com/Huawei-APAC-Professional-Services/ucs-workshop.git
 ```
 
-2. Change directory to `ucs-workshop/Infra`
+2. Change directory to `ucs-workshop/infra`
 3. Apply Terraform Configuration  
 
 :bulb: Local state file is used for this Terraform configuration, but you can change it to remote state as well.
@@ -54,6 +54,15 @@ git clone https://github.com/Huawei-APAC-Professional-Services/ucs-workshop.git
 Terraform apply
 ```
 Wait for the Terraform to finish, two CCE clusters will be created in Singapore and Hong Kong region.
+
+4. Save the output
+When the terraform applying completes, you will get the following three outputs, save it for future use or you can query it by using `terraform ouput` command in the future
+
+* ecs_public_ip
+* hk_elb_subnet_id
+* singapore_elb_subnet_id 
+
+![Saveoutput](./images/003_ApplyTerraform_001.png)
 
 ## Create UCS fleet
 1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential

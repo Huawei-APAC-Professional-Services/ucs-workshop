@@ -1,7 +1,7 @@
 locals {
   ucs_singapore_cce_master_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 0)
-  ucs_singapore_nat_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 1)
-  ucs_singapore_elb_cidr = cidrsubnet(var.ucs_singapore_cidr, 8, 2)
+  ucs_singapore_elb_cidr        = cidrsubnet(var.ucs_singapore_cidr, 8, 2)
+  ucs_singapore_test_cidr       = cidrsubnet(var.ucs_singapore_cidr, 8, 3)
   ucs_singapore_cce_pod_cidr    = cidrsubnet(var.ucs_singapore_cidr, 4, 1)
 }
 
@@ -31,20 +31,86 @@ resource "huaweicloud_vpc_subnet" "ucs_singapore_cce_pod" {
   vpc_id     = huaweicloud_vpc.ucs_singapore.id
 }
 
-resource "huaweicloud_vpc_subnet" "ucs_singapore_nat" {
-  name = "ucs_singapore_nat"
-  cidr = local.ucs_singapore_nat_cidr
-
-  gateway_ip = cidrhost(local.ucs_singapore_nat_cidr, 1)
-  vpc_id     = huaweicloud_vpc.ucs_singapore.id
-}
-
 resource "huaweicloud_vpc_subnet" "ucs_singapore_elb" {
   name = "ucs_singapore_elb"
   cidr = local.ucs_singapore_elb_cidr
 
   gateway_ip = cidrhost(local.ucs_singapore_elb_cidr, 1)
   vpc_id     = huaweicloud_vpc.ucs_singapore.id
+}
+
+resource "huaweicloud_vpc_subnet" "ucs_singapore_test" {
+  name = "ucs_singapore_test"
+  cidr = local.ucs_singapore_test_cidr
+
+  gateway_ip = cidrhost(local.ucs_singapore_test_cidr, 1)
+  vpc_id     = huaweicloud_vpc.ucs_singapore.id
+}
+
+data "huaweicloud_availability_zones" "zones" {}
+
+data "huaweicloud_compute_flavors" "ecsflavor" {
+  availability_zone = data.huaweicloud_availability_zones.zones.names[0]
+  performance_type  = "normal"
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+data "huaweicloud_images_image" "ubuntu" {
+  name        = "Ubuntu 22.04 server 64bit"
+  most_recent = true
+}
+
+resource "huaweicloud_compute_keypair" "ecs_keypair" {
+  name     = "ecs-keypair"
+  key_file = "ecs.pem"
+}
+
+resource "huaweicloud_networking_secgroup" "ecs_secgroup" {
+  name        = "ecs_secgroup"
+  description = "Allow SSH to ECS"
+}
+
+resource "huaweicloud_networking_secgroup_rule" "ecs_secgroup_allow_ssh" {
+  security_group_id = huaweicloud_networking_secgroup.ecs_secgroup.id
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
+resource "huaweicloud_compute_instance" "test" {
+  name                        = "test"
+  image_id                    = data.huaweicloud_images_image.ubuntu.id
+  user_data                   = file("ecs.yaml")
+  key_pair                    = huaweicloud_compute_keypair.ecs_keypair.name
+  flavor_id                   = data.huaweicloud_compute_flavors.ecsflavor.ids[0]
+  security_group_ids          = [huaweicloud_networking_secgroup.ecs_secgroup.id]
+  availability_zone           = data.huaweicloud_availability_zones.zones.names[0]
+  delete_disks_on_termination = true
+
+  network {
+    uuid = huaweicloud_vpc_subnet.ucs_singapore_test.id
+  }
+}
+
+resource "huaweicloud_vpc_eip" "ecs_test_singapore" {
+  publicip {
+    type = "5_bgp"
+  }
+  bandwidth {
+    name        = "ecs-test-singapore"
+    size        = 5
+    share_type  = "PER"
+    charge_mode = "traffic"
+  }
+}
+
+resource "huaweicloud_compute_eip_associate" "associated" {
+  public_ip   = huaweicloud_vpc_eip.ecs_test_singapore.address
+  instance_id = huaweicloud_compute_instance.test.id
 }
 
 resource "huaweicloud_vpc_eip" "cce_singapore" {
@@ -72,7 +138,7 @@ resource "huaweicloud_cce_cluster" "ucs_singapore" {
 resource "huaweicloud_cce_node_pool" "ucs_singapore" {
   cluster_id               = huaweicloud_cce_cluster.ucs_singapore.id
   name                     = "ucs-singapore"
-  os                       = "Ubuntu 22.04"
+  os                       = "Ubuntu 18.04"
   initial_node_count       = 2
   flavor_id                = "c7n.large.4"
   password                 = "ucs@workshop2023"
@@ -93,29 +159,10 @@ resource "huaweicloud_cce_node_pool" "ucs_singapore" {
   }
 }
 
-resource "huaweicloud_nat_gateway" "ucs_singapore" {
-  name        = "cce-singapore"
-  description = "test for terraform"
-  spec        = "1"
-  vpc_id      = huaweicloud_vpc.ucs_singapore.id
-  subnet_id   = huaweicloud_vpc_subnet.ucs_singapore_nat.id
+output "ecs_public_ip" {
+  value = huaweicloud_vpc_eip.ecs_test_singapore.address
 }
 
-resource "huaweicloud_vpc_eip" "ucs_singapore" {
-  publicip {
-    type = "5_bgp"
-  }
-
-  bandwidth {
-    share_type  = "PER"
-    name        = "cce_nat"
-    size        = 10
-    charge_mode = "traffic"
-  }
-}
-
-resource "huaweicloud_nat_snat_rule" "ucs_singapore_cce_pod" {
-  nat_gateway_id = huaweicloud_nat_gateway.ucs_singapore.id
-  floating_ip_id = huaweicloud_vpc_eip.ucs_singapore.id
-  subnet_id      = huaweicloud_vpc_subnet.ucs_singapore_cce_pod.id
+output "singapore_elb_subnet_id" {
+  value = huaweicloud_vpc_subnet.ucs_singapore_elb.id
 }

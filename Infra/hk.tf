@@ -1,7 +1,6 @@
 locals {
   ucs_hk_cce_master_cidr = cidrsubnet(var.ucs_hk_cidr, 8, 0)
-  ucs_hk_nat_cidr = cidrsubnet(var.ucs_hk_cidr, 8, 1)
-  ucs_hk_elb_cidr = cidrsubnet(var.ucs_hk_cidr, 8, 2)
+  ucs_hk_elb_cidr        = cidrsubnet(var.ucs_hk_cidr, 8, 2)
   ucs_hk_cce_pod_cidr    = cidrsubnet(var.ucs_hk_cidr, 4, 1)
 }
 
@@ -34,19 +33,10 @@ resource "huaweicloud_vpc_subnet" "ucs_hk_cce_pod" {
   vpc_id     = huaweicloud_vpc.ucs_hk.id
 }
 
-resource "huaweicloud_vpc_subnet" "ucs_hk_nat" {
-  provider = huaweicloud.hk
-  name = "ucs_hk_nat"
-  cidr = local.ucs_hk_nat_cidr
-
-  gateway_ip = cidrhost(local.ucs_hk_nat_cidr, 1)
-  vpc_id     = huaweicloud_vpc.ucs_hk.id
-}
-
 resource "huaweicloud_vpc_subnet" "ucs_hk_elb" {
   provider = huaweicloud.hk
-  name = "ucs_hk_elb"
-  cidr = local.ucs_hk_elb_cidr
+  name     = "ucs_hk_elb"
+  cidr     = local.ucs_hk_elb_cidr
 
   gateway_ip = cidrhost(local.ucs_hk_elb_cidr, 1)
   vpc_id     = huaweicloud_vpc.ucs_hk.id
@@ -77,10 +67,10 @@ resource "huaweicloud_cce_cluster" "ucs_hk" {
 }
 
 resource "huaweicloud_cce_node_pool" "ucs_hk" {
-  provider = huaweicloud.hk
+  provider                 = huaweicloud.hk
   cluster_id               = huaweicloud_cce_cluster.ucs_hk.id
   name                     = "ucs-hk"
-  os                       = "Ubuntu 22.04"
+  os                       = "Ubuntu 18.04"
   initial_node_count       = 2
   flavor_id                = "c7n.large.4"
   password                 = "ucs@workshop2023"
@@ -101,32 +91,6 @@ resource "huaweicloud_cce_node_pool" "ucs_hk" {
   }
 }
 
-resource "huaweicloud_nat_gateway" "ucs_hk" {
-  provider = huaweicloud.hk
-  name        = "cce-hk"
-  description = "test for terraform"
-  spec        = "1"
-  vpc_id      = huaweicloud_vpc.ucs_hk.id
-  subnet_id   = huaweicloud_vpc_subnet.ucs_hk_nat.id
-}
-
-resource "huaweicloud_vpc_eip" "ucs_hk" {
-  provider = huaweicloud.hk
-  publicip {
-    type = "5_bgp"
-  }
-
-  bandwidth {
-    share_type  = "PER"
-    name        = "cce_nat"
-    size        = 10
-    charge_mode = "traffic"
-  }
-}
-
-resource "huaweicloud_nat_snat_rule" "ucs_hk_cce_pod" {
-  provider = huaweicloud.hk
-  nat_gateway_id = huaweicloud_nat_gateway.ucs_hk.id
-  floating_ip_id = huaweicloud_vpc_eip.ucs_hk.id
-  subnet_id      = huaweicloud_vpc_subnet.ucs_hk_cce_pod.id
+output "hk_elb_subnet_id" {
+  value = huaweicloud_vpc_subnet.ucs_hk_elb.id
 }

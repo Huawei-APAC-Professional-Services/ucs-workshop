@@ -199,3 +199,27 @@ kubectl apply -f propagation_policy.yaml
 * ns1.huaweicloud-dns.net. 
 * ns1.huaweicloud-dns.org. 
 
+## Create DNS Policy
+1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential
+2. On the upper left corner of the console, Choose `Service List` and search `ucs`
+![searchucs](./images/002_CreateFleet_001.png)
+3. Choose `Ubiquitous Cloud Native Service`
+4. On the left side panel of the console, Choose `Fleets` under `Infrastructure`
+5. Choose the fleet you created in [Create UCS fleet](#create-ucs-fleet) task
+6. Choose `DNS Policies` under the `Federation` section and Choose `Create DNS Policy` on the upper right corner of the console
+![DNSPolicy](./images/007_DNS_003.png)
+7. On the `Create DNS Policy`, Choose the `app-service` and click `Next: Access Mode`
+![DNSPolicy01](./images/007_DNS_004.png)
+8. Choose `Traffic Ratio` as `Active/Standby` and click `Create DNS Policy`
+![DNSPolicy02](./images/007_DNS_005.png)
+9. Back to `DNS Policies` page and click the policy you created in last step
+![DNSPolicy03](./images/007_DNS_006.png)
+10. Setup a alias for the service so it can be memorized easily
+![DNSPolicy04](./images/007_DNS_007.png)
+![DNSPolicy05](./images/007_DNS_008.png)
+
+11. Access the application with the alias to check if the traffic policy is taking effective, the result should be able to tell where the response comes from.
+![CheckResult](./images/008_Check_001.png)
+
+12. Change the `Traffic Ratio` of the DNS policy to explore other options
+

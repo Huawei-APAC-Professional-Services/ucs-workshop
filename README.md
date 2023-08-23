@@ -92,7 +92,7 @@ After the terraform applying, there is a `ecs.pem` file inside the `infra` direc
 8. On the `Fleets` page, Choose `Register Cluster`
 ![RegisterCluster2](./images/002_CreateFleet_007.png)
 9. On the `Register Cluster` page, provide the following parameters:
-* Fleet: Choose the one you created in last step
+* Fleet: Choose the one you created in step 7
 * Add Cluster: Choose the 2 CCE clusters created in [Apply Terraform Configuration](#apply-terraform-configuration) task
 * Full Package: Don't choose, use `pay-per-use` billing model
 ![AddCluster01](./images/002_CreateFleet_008.png)
@@ -157,7 +157,7 @@ Click `Download` to save `kubeconfig.json` on your laptop
 ```
 kubectl get clusters
 ```
-You will get the similar outputs like the following picture depicts
+You will get the similar outputs like the following picture depicted
 ![Getclusters](./images/004_GetKubeConfig_005.png)
 
 ## Application Deployment

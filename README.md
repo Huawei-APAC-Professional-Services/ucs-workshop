@@ -1,6 +1,11 @@
 # ucs-workshop
 This repository contains all necessary material for UCS workshop
 
+# Prerequisites
+1. A Huawei Cloud Account
+2. A public domain name(Must use a domain name that you have control over it unless you attend a guided workshop)
+3. `git` and `Terraform` command tools have been installed on your laptop
+
 # Tasks
 
 ## Create Access Keys

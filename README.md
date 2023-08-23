@@ -1,6 +1,10 @@
 # ucs-workshop
 This repository contains all necessary material for UCS workshop
 
+# Workshop Hands-on Environment
+
+![ucs-workshop-env](./images/ucs-workshop-arch.jpg)
+
 # Prerequisites
 1. A Huawei Cloud Account
 2. A public domain name(Must use a domain name that you have control over it unless you attend a guided workshop)

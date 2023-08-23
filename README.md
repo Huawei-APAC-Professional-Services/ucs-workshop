@@ -179,5 +179,23 @@ kubectl apply -f propagation_policy.yaml
 11. Execute the following command to check if the deployment is successful
 ![Deployment](./images/005_appdeployment_002.png)
 
-## Traffic Management
+12. Log in to Huawei Cloud console and Choose the fleet you created earlier, then choose `Workloads` and `Services and Ingresses` to check if the application is deployed successfully, you should be able to see the status as the following pictures depicted.
+![DeploymentStatus01](./images/006_appdeploymentStatus_001.png)
+![DeploymentStatus02](./images/006_appdeploymentStatus_002.png)
+
+## Create Public DNS Zones on Huawei Cloud  
+
+**If you participates in a guided workshop, this step is not necessary, Please check with facilitators.** 
+
+1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential
+2. On the upper left corner of the console, Choose `Service List` and search `dns`
+![dns01](./images/007_DNS_001.png)
+3. Choose `Public Zones` from the left side panel and Choose `Create Public Zone` on the upper right corner of the console.
+4. Provide a domain name that will be used on Huawei Cloud
+
+:bulb: Before Huawei Cloud Domain Name Service can provide dns resolution publicly, you need to create a NS records on your domain name registrar with the following values
+* ns1.huaweicloud-dns.com. 
+* ns1.huaweicloud-dns.cn. 
+* ns1.huaweicloud-dns.net. 
+* ns1.huaweicloud-dns.org. 
 

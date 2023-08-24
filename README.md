@@ -1,5 +1,6 @@
 # ucs-workshop
-UCS is running on [Karmada](https://karmada.io/docs/) which is a CNCF multi-cloud container orchestration project. The overall architecture of Karmada is shown as below:
+UCS is running on [Karmada](https://karmada.io/docs/) which is a CNCF multi-cloud container orchestration project. The overall architecture of Karmada is shown as below:   
+
 ![Karmada](https://karmada.io/assets/images/architecture-37447d3b4fceeae700e488373138d808.png)
 
 # Goals

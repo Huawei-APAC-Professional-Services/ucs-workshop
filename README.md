@@ -233,7 +233,7 @@ kubectl apply -f propagation_policy.yaml
 ![DNSPolicy04](./images/007_DNS_007.png)
 ![DNSPolicy05](./images/007_DNS_008.png)
 
-11. Access the application with the alias to check if the traffic policy is taking effective, the result should be able to tell where the response comes from.
+11. Access the application with the alias to check if the traffic policy is taking effect, the result should be able to tell where the response comes from.
 ![CheckResult](./images/008_Check_001.png)
 
 12. Change the `Traffic Ratio` of the DNS policy to explore other options

@@ -241,6 +241,8 @@ kubectl apply -f propagation_policy.yaml
 
 # Design Discussion
 
-1. **How do we integrate this multi-cluster application with HFA? Do we need a separate account? How does the traffic control works with the multi-cluster application?**
+1. **How do you think the multi-cluster management capabilities of UCS? Is it enough for your customers or do you think there is any improvement needed?**
 
-2. **Is there any alternative solution to UCS?**
+2. **How do we integrate this multi-cluster application with HFA? Do we need a separate account? How does the traffic control works with the multi-cluster application?**
+
+3. **Is there any alternative solution to UCS?**

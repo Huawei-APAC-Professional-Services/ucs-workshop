@@ -128,6 +128,12 @@ icacls ecs.pem /grant:r "%username%":"(R)"
 icacls ecs.pem /inheritance:r
 start-process "icacls.exe" -ArgumentList 'ecs.pem /grant:r "$env:USERNAME":"(R)"'
 ```
+
+* Linux/MacOS  
+```
+chmod 400 ecs.pem
+``` 
+
 3. Log in to the ECS created in [Apply Terraform Configuration](#apply-terraform-configuration) with the following command on your terminal
 ```
 ssh -i ecs.pem root@ecs_public_ip

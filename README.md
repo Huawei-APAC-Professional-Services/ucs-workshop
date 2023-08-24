@@ -1,5 +1,11 @@
 # ucs-workshop
-This repository contains all necessary material for UCS workshop
+
+# Goals
+* Build a multi-cluster management solution
+* Explore the traffic distribution policies 
+
+# Target audience
+This is a technical workshop using two CCE cluster to simulate the situation where customers have multiple Kubernetes clusters on different cloud platform and on-premises. The participants should have experiences with Huawei Cloud and have basic knowledge of Kubernetes.
 
 # Workshop Hands-on Environment
 

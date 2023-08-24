@@ -84,7 +84,6 @@ resource "huaweicloud_networking_secgroup_rule" "ecs_secgroup_allow_ssh" {
 resource "huaweicloud_compute_instance" "test" {
   name                        = "test"
   image_id                    = data.huaweicloud_images_image.ubuntu.id
-  user_data                   = file("ecs.yaml")
   key_pair                    = huaweicloud_compute_keypair.ecs_keypair.name
   flavor_id                   = data.huaweicloud_compute_flavors.ecsflavor.ids[0]
   security_group_ids          = [huaweicloud_networking_secgroup.ecs_secgroup.id]

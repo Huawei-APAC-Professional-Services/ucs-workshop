@@ -238,3 +238,9 @@ kubectl apply -f propagation_policy.yaml
 
 12. Change the `Traffic Ratio` of the DNS policy to explore other options
 
+
+# Design Discussion
+
+1. **How do we integrate this multi-cluster application with HFA? Do we need a separate account? How does the traffic control works with the multi-cluster application?**
+
+2. **Is there any alternative solution to UCS?**

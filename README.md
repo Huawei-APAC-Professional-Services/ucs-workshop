@@ -16,7 +16,7 @@ This is a technical workshop using two CCE cluster to simulate the situation whe
 
 # Prerequisites
 1. A Huawei Cloud Account
-2. A public domain name(Must use a domain name that you have control over it unless you attend a guided workshop)
+2. A public domain name(Must use a domain name that you have control over it unless you attend a workshop hosted by Professional Service team)
 3. `git` and `Terraform` command tools have been installed on your laptop
 
 # Tasks

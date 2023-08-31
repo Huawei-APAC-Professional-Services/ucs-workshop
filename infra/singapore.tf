@@ -85,6 +85,7 @@ resource "huaweicloud_compute_instance" "test" {
   name                        = "test"
   image_id                    = data.huaweicloud_images_image.ubuntu.id
   key_pair                    = huaweicloud_compute_keypair.ecs_keypair.name
+  user_data                   = file("boot.yaml")
   flavor_id                   = data.huaweicloud_compute_flavors.ecsflavor.ids[0]
   security_group_ids          = [huaweicloud_networking_secgroup.ecs_secgroup.id]
   availability_zone           = data.huaweicloud_availability_zones.zones.names[0]

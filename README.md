@@ -89,6 +89,7 @@ After the terraform applying, there is a `ecs.pem` file inside the `infra` direc
 ![changesubid](./images/005_appdeployment_001.png)
 7. Open `propagation.yaml` file with a text editor on your laptop
 9. Move to line `81` and change the value of `kubernetes.io/elb.subnet-id` field to `hk_elb_subnet_id`
+![changesubid1](./images/005_appdeployment_002.png)
 
 ## Create UCS fleet
 1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential

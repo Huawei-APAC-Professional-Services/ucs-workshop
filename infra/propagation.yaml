@@ -76,9 +76,9 @@ spec:
           - ucs-hk
       overriders:
         annotationsOverrider:
-#          - operator: replace
-#            value:
-#              kubernetes.io/elb.subnet-id: 20d6cfaa-6d64-4fb1-9360-02e982b81f77
+          - operator: replace
+            value:
+              kubernetes.io/elb.subnet-id: 4e014011-da36-48ce-a256-4d7f1fbc82c5
           - operator: replace
             value:
               kubernetes.io/elb.autocreate:

@@ -1,7 +1,15 @@
-resource "null_resource" "ucs_file_copy_to_test_ecs" {
-  depends_on = [ huaweicloud_compute_keypair.ecs_keypair ]
+// Need to wait for cloud-init to finish
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [ huaweicloud_compute_keypair.ecs_keypair,huaweicloud_compute_instance.test ]
+
+  create_duration = "60s"
+}
+
+resource "null_resource" "ucs_file_copy_app_to_test_ecs" {
+  depends_on = [ time_sleep.wait_60_seconds ]
   triggers = {
-    ecs_public_ip = huaweicloud_compute_instance.test.id
+#    ecs_public_ip = huaweicloud_compute_instance.test.id
+     always_run = timestamp()
   }
 
   connection {
@@ -17,7 +25,12 @@ resource "null_resource" "ucs_file_copy_to_test_ecs" {
   }
 
   provisioner "file" {
-    source      = "propagation_policy.yaml"
-    destination = "/root/app/propagation_policy.yaml"
+    source      = "propagation.yaml"
+    destination = "/root/app/propagation.yaml"
   }
+
+#  provisioner "file" {
+#    source      = "kubeconfig.json"
+#    destination = "/root/.kube/config"
+#  }
 }

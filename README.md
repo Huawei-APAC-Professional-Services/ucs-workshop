@@ -74,7 +74,7 @@ Terraform apply
 Wait for the Terraform to finish, two CCE clusters will be created in Singapore and Hong Kong region.
 
 4. Save the output
-When the terraform applying completes, you will get the following three outputs, save it for future use or you can query it by using `terraform ouput` command in the future
+When the terraform applying completes, you will get the following three outputs, save it for future use or you can query it by using `terraform ouput` command when the output is needed
 
 * ecs_public_ip
 * hk_elb_subnet_id
@@ -83,6 +83,12 @@ When the terraform applying completes, you will get the following three outputs,
 ![Saveoutput](./images/003_ApplyTerraform_001.png)
 
 After the terraform applying, there is a `ecs.pem` file inside the `infra` directory, it will be used to login to ECS.
+
+5. Open `app.yaml` file with a text editor on your laptop
+6. Move to line `72` and change the value of `kubernetes.io/elb.subnet-id` field to `singapore_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
+![changesubid](./images/005_appdeployment_001.png)
+7. Open `propagation.yaml` file with a text editor on your laptop
+9. Move to line `81` and change the value of `kubernetes.io/elb.subnet-id` field to `hk_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
 
 ## Create UCS fleet
 1. Log in to Huawei Cloud Console and Choose `Singapore` region using provided credential
@@ -113,8 +119,35 @@ After the terraform applying, there is a `ecs.pem` file inside the `infra` direc
 ![EnabledFederation2](./images/002_CreateFleet_012.png)
 12. Check UCS fleets status until the federation is enabled
 ![EnabledFederation2](./images/002_CreateFleet_013.png)
+13. Choose the fleet you just created.
+![SelectFleet](./images/004_GetKubeConfig_001.png)
+14. On the `Feet Info` part of the page, Click `kubectl` to download kubeconfig file
+![ClickKubectl](./images/004_GetKubeConfig_002.png)
+15. On the pop-up page, provide the following parameters:
+* project name: `ap-southeast-3`
+* VPC: `ucs_singapore`
+* Master Node Subnet: `ucs_singapore_cce_master`
+* Validity Period: any value will do
 
-## Configure kubectl in ECS
+Click `Download` to save `kubeconfig.json` in `ucs-workshop/infra` directory on your laptop
+
+![kubeconfig-input](./images/004_GetKubeConfig_003.png)
+
+16. Copy the following code block to the Terraform resource `null_resource.ucs_file_copy_app_to_test_ecs` inside `ucs-workshop/infra/filecopy.tf` file
+```
+provisioner "file" {
+  source      = "kubeconfig.json"
+  destination = "/root/.kube/config"
+}
+```
+![copykubeconfig](./images/004_GetKubeConfig_006.png)
+
+17. Apply Terraform Configuration again to copy the file to ECS
+```
+Terraform apply
+```
+
+## Check Test Environment
 1. Change directory to `ucs-workshop/infra`
 2. If you don't have any ssh terminal installed on your laptop, you can use OpenSSH for Windows to log in to ECS, but first you may need to change the key permission when you are going to use OpenSSH for Windows, you can choose one of the two methods to change the key permission depends on which windows terminal you are using.
 
@@ -138,37 +171,11 @@ chmod 400 ecs.pem
 ```
 ssh -i ecs.pem root@ecs_public_ip
 ```
-4. Execute the following commands to install `kubectl`
-```
-apt-get update
-apt-get install -y apt-transport-https ca-certificates curl
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-apt-get update
-apt-get install -y kubectl
-```
-5. Execute the following command to check if `kubectl` has been properly installed
+4. Execute the following command to check if `kubectl` has been properly installed
 ```
 kubectl version --client
 ```
-6. Log in to Huawei Cloud console and choose `UCS` service
-7. On the `Ubiquitous Cloud Native Service` page, Choose the fleet you created in [Create UCS fleet](#create-ucs-fleet) task.
-![SelectFleet](./images/004_GetKubeConfig_001.png)
-8. On the `Feet Info` part of the page, Click `kubectl` to download kubeconfig file
-![ClickKubectl](./images/004_GetKubeConfig_002.png)
-9. On the pop-up page, provide the following parameters:
-* project name: `ap-southeast-3`
-* VPC: `ucs_singapore`
-* Master Node Subnet: `ucs_singapore_cce_master`
-* Validity Period: any value will do
-
-Click `Download` to save `kubeconfig.json` on your laptop
-
-![kubeconfig-input](./images/004_GetKubeConfig_003.png)
-
-10. Copy the content of the downloaded kubeconfig to `.kube/config` file in the ECS
-
-11. Execute the following command to check if the kubeconfig is valid
+5. Execute the following command to check if the kubeconfig is valid
 ```
 kubectl get clusters
 ```
@@ -176,22 +183,19 @@ You will get the similar outputs like the following picture depicted
 ![Getclusters](./images/004_GetKubeConfig_005.png)
 
 ## Application Deployment
-1. Change directory to `ucs-workshop/app` and open `app.yaml` file with a text editor on your laptop
-2. Move to line `72` and change the value of `kubernetes.io/elb.subnet-id` field to `singapore_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
-![changesubid](./images/005_appdeployment_001.png)
-3. Copy `app.yaml` file into ECS
-4. Execute the following command to deploy application to UCS
+1. Log in to ECS and Change directory to `ucs-workshop/app`
+2. Execute the following command to deploy application to UCS
 ```
 kubectl apply -f app.yaml
 ```
-5. Change directory to `ucs-workshop` and open `propagation_policy.yaml` file with a text editor on your laptop
-6. Move to line `81` and change the value of `kubernetes.io/elb.subnet-id` field to `hk_elb_subnet_id`(Saved in the [Apply Terraform Configuration](#apply-terraform-configuration))
-9. Copy `propagation_policy.yaml` file into ECS
-10. Execute the following command to deploy application into two different clusters
+3. Execute the following command to deploy application into two different clusters
 ```
 kubectl apply -f propagation_policy.yaml
 ```
-11. Execute the following command to check if the deployment is successful
+4. Execute the following command to check if the deployment is successful
+```
+kubectl get deployment
+```
 ![Deployment](./images/005_appdeployment_002.png)
 
 12. Log in to Huawei Cloud console and Choose the fleet you created earlier, then choose `Workloads` and `Services and Ingresses` to check if the application is deployed successfully, you should be able to see the status as the following pictures depicted.

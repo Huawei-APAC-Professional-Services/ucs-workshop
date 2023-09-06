@@ -69,7 +69,7 @@ metadata:
         "l4_flavor_name": "L4_flavor.elb.s1.small"
       }'
     kubernetes.io/elb.lb-algorithm: ROUND_ROBIN
-#    kubernetes.io/elb.subnet-id: 69fc9f0a-e325-4d9b-b85d-c73ae9bc2ec6
+    kubernetes.io/elb.subnet-id: 274590a9-fa19-4947-9106-601aca3f3ebb
 spec:
   selector:
     app: app
